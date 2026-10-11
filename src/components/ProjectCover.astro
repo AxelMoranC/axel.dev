@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+
+const { project, class: className, loading = 'lazy' } = Astro.props;
+const { cover, coverAlt, coverFit, coverWidth, coverHeight } = project.data;
+const contain = coverFit === 'contain';
+---
+
+<div
+  class:list={['img-frame', contain && 'cover-contain grid place-items-center p-6 sm:p-10', className]}
+  transition:name={`cover-${project.id}`}
+>
+  <img
+    src={cover}
+    alt={coverAlt}
+    width={coverWidth}
+    height={coverHeight}
+    loading={loading}
+    decoding="async"
+    class:list={contain ? 'h-auto max-h-full w-full object-contain' : 'size-full object-cover'}
+    style={contain ? `max-width: ${coverWidth}px` : undefined}
+  />
+</div>
+
+<style>
+  /* Screenshots keep their native size on a panel instead of being cropped,
+     because UI text becomes unreadable when object-cover scales it. */
+  .cover-contain img {
+    border-radius: 10px;
+    box-shadow:
+      0 1px 2px rgb(43 38 32 / 0.06),
+      0 12px 32px -16px rgb(43 38 32 / 0.28);
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+title: article_list theme setting
+summary: A new theme input setting that lets Shopify merchants pick multiple blog articles in the theme editor. My internship project at Shopify, built in fall 2025.
+year: '2025'
+role: Software Engineer Intern, Shopify
+stack: [Shopify themes, Liquid, Theme editor]
+cover: /images/projects/article-list-setting.png
+coverAlt: The article_list setting in the Shopify theme editor, showing a Featured articles picker with two selected articles and a Change button
+coverFit: contain
+coverWidth: 575
+coverHeight: 238
+coverCredit:
+  label: Shopify developer documentation
+  href: https://shopify.dev/docs/storefronts/themes/architecture/settings/input-settings#article_list
+links:
+  - label: Changelog
+    href: https://shopify.dev/changelog/posts/new-articlelist-input-setting-for-themes
+  - label: Documentation
+    href: https://shopify.dev/docs/storefronts/themes/architecture/settings/input-settings#article_list
+featured: true
+order: 1
+---
+
+## What it is
+
+`article_list` is an input setting type for Shopify theme sections and blocks. It adds an article picker to the theme editor, so merchants can select multiple published articles from their store's blogs. Themes can use it for featured article sections, related content areas or article galleries.
+
+It was [announced in the Shopify developer changelog](https://shopify.dev/changelog/posts/new-articlelist-input-setting-for-themes) on January 26, 2026, and is documented alongside the other [specialized input settings](https://shopify.dev/docs/storefronts/themes/architecture/settings/input-settings#article_list).
+
+## How theme developers use it
+
+A theme declares the setting in a section or block schema. The optional `limit` caps how many articles a merchant can pick, up to 50.
+
+```json
+{
+  "type": "article_list",
+  "id": "featured_articles",
+  "label": "Featured articles",
+  "limit": 12
+}
+```
+
+In Liquid, the setting returns an array of `article` objects, so a section can loop over the merchant's selection:
+
+```liquid
+{% for article in section.settings.featured_articles %}
+  <a href="{{ article.url }}">{{ article.title }}</a>
+{% endfor %}
+```
+
+The array also supports the `paginate` tag and `.count`, and only published articles can be selected.
+
+## My role
+
+I built this setting as my intern project at Shopify in fall 2025.
+
+Placeholder. Add a public-safe paragraph on what you learned, without internal details.

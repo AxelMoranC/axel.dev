@@ -1,6 +1,6 @@
 ---
-import { Icon } from 'astro-icon/components';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ResumeLink from '../components/ResumeLink.astro';
 import { site } from '../config';
 ---
 
@@ -20,13 +20,18 @@ import { site } from '../config';
 
         <div class="prose mt-8" data-reveal style="--i:1">
           <p>
-            Placeholder bio, paragraph one. Who you are, what you do today, and the kind of problems you enjoy working
-            on. Keep it in your own voice.
+            I'm a full-time Software Engineer I at Shopify, based in Montreal. I studied Computer Science at Concordia University,
+            class of 2026.
           </p>
           <p>
-            Placeholder bio, paragraph two. How you got into software, what shaped how you work, and what you are
-            getting better at right now.
+            Before joining full time, I interned at Shopify, BetterSleep, Actalent and VuWall Technology. As a Shopify intern I built the{' '}
+            <a href="https://shopify.dev/docs/storefronts/themes/architecture/settings/input-settings#article_list"
+              ><code>article_list</code> theme setting</a
+            >, and at BetterSleep I worked on React features for an app with more than 3 million monthly active users.
+            Before that I built internal tools and automated end-to-end tests.
           </p>
+          <p>I speak English, French and Spanish.</p>
+          <p>Placeholder. A sentence in your own voice about what you enjoy building and why.</p>
         </div>
 
         <div class="mt-14 border-t border-line pt-8" data-reveal>
@@ -50,17 +55,7 @@ import { site } from '../config';
           >
             Get in touch
           </a>
-          {
-            site.resumeUrl && (
-              <a
-                href={site.resumeUrl}
-                class="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:border-accent hover:bg-accent-soft"
-              >
-                <Icon name="ph:file-arrow-down" class="size-4" />
-                Download resume
-              </a>
-            )
-          }
+          <ResumeLink />
         </div>
       </div>
     </div>

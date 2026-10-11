@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { site } from '../config';
+import ResumeLink from './ResumeLink.astro';
+import { resume, site } from '../config';
 
 const year = new Date().getFullYear();
 ---
@@ -40,6 +41,7 @@ const year = new Date().getFullYear();
             </li>
           ))
         }
+        {resume.url && <li><ResumeLink variant="text" /></li>}
       </ul>
     </div>
 

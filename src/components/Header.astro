@@ -1,7 +1,8 @@
 ---
 import { Icon } from 'astro-icon/components';
 import ThemeToggle from './ThemeToggle.astro';
-import { nav, site } from '../config';
+import ResumeLink from './ResumeLink.astro';
+import { nav, resume, site } from '../config';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
@@ -45,6 +46,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
               );
             })
           }
+          {resume.url && <li><ResumeLink variant="nav" /></li>}
         </ul>
       </nav>
 
@@ -82,6 +84,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
           </li>
         ))
       }
+      {resume.url && <li class="menu-item" style={`--i:${nav.length}`}><ResumeLink variant="menu" /></li>}
     </ul>
   </nav>
 </header>

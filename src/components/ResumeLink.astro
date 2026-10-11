@@ -1,0 +1,36 @@
+---
+import { Icon } from 'astro-icon/components';
+import { resume } from '../config';
+
+interface Props {
+  variant?: 'button' | 'nav' | 'menu' | 'text';
+  class?: string;
+}
+
+const { variant = 'button', class: className } = Astro.props;
+
+const styles = {
+  button:
+    'inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors duration-200 hover:border-accent hover:bg-accent-soft active:scale-[0.98]',
+  nav: 'group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted transition-colors duration-200 hover:text-ink',
+  menu: 'inline-flex items-center gap-2 py-3 text-2xl font-medium tracking-tight text-muted',
+  text: 'group inline-flex items-center gap-2 text-muted transition-colors hover:text-ink',
+};
+const iconSize = { button: 'size-4', nav: 'size-4', menu: 'size-6', text: 'size-[1.1rem]' };
+const label = variant === 'button' ? 'Download resume' : 'Resume';
+---
+
+{
+  resume.url && (
+    <a
+      href={resume.url}
+      download={resume.fileName}
+      type="application/pdf"
+      class:list={[styles[variant], className]}
+      aria-label={variant === 'button' ? undefined : 'Download resume (PDF)'}
+    >
+      <Icon name="ph:file-arrow-down" class={iconSize[variant]} />
+      <span class:list={[variant !== 'button' && variant !== 'menu' && 'link-underline']}>{label}</span>
+    </a>
+  )
+}

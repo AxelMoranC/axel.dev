@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import ProjectCover from './ProjectCover.astro';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const { project, size = 'default', index = 0, class: className } = Astro.props;
-const { title, summary, year, stack, cover, coverAlt } = project.data;
+const { title, summary, year, stack } = project.data;
 const large = size === 'large';
 ---
 
@@ -19,20 +20,11 @@ const large = size === 'large';
   data-reveal
   style={`--i:${index}`}
 >
-  <div
-    class:list={['img-frame', large ? 'aspect-[4/3] md:aspect-auto md:min-h-[22rem] md:flex-1' : 'aspect-[16/10]']}
-    transition:name={`cover-${project.id}`}
-  >
-    <img
-      src={cover}
-      alt={coverAlt}
-      width="1600"
-      height="1200"
-      loading={index < 2 ? 'eager' : 'lazy'}
-      decoding="async"
-      class="size-full object-cover"
-    />
-  </div>
+  <ProjectCover
+    project={project}
+    loading={index < 2 ? 'eager' : 'lazy'}
+    class={large ? 'aspect-[4/3] md:aspect-auto md:min-h-[22rem] md:flex-1' : 'aspect-[16/10]'}
+  />
   <div class="mt-4 flex items-baseline justify-between gap-4">
     <h3 class:list={['font-semibold tracking-tight', large ? 'text-xl md:text-2xl' : 'text-lg']}>
       <span class="link-underline">{title}</span>
