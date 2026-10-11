@@ -1,28 +1,46 @@
 ---
 title: Travel Agent
-summary: Natural-language CLI that researches trips with Claude and server-side web search. Also ships as a slash-command skill.
+summary: A command-line research agent that turns a plain-English trip request into ranked flight and hotel options with source links.
 year: '2026'
 role: Solo project
-stack: [Python, Anthropic API]
-cover: https://picsum.photos/seed/travel-agent-cli/1600/1200?grayscale
-coverAlt: Cover image placeholder for Travel Agent
+stack: [Python, Anthropic API, Rich]
+coverSnippet:
+  lang: bash
+  filename: zsh
+  code: |-
+    $ travel-agent "JFK to Tokyo mid-June
+        under $1500, prefer nonstop"
+
+    $ travel-agent --hotels-only \
+        "boutique hotel in Lisbon,
+         April 10-14"
+
+    $ travel-agent --max-searches 10 \
+        "weekend in Mexico City"
 repo: https://github.com/AxelMoranC/travel-agent
 featured: true
 order: 2
 ---
 
-## The problem
+## What it does
 
-Placeholder. What problem were you solving, and for whom? One short paragraph.
+You describe a trip in plain English, for example "JFK to Tokyo mid-June under $1500, prefer nonstop", and the agent researches it on the live web. It returns a ranked shortlist of flights and hotels, each with a source link and the date the price was seen, so you can confirm before booking. It finds options; it doesn't book them.
 
-## What I built
+## How it works
 
-Placeholder. Describe the solution and your part in it. Mention the interesting technical decisions, not just the stack.
+The CLI streams a single Claude request that has Anthropic's server-side `web_search` and `web_fetch` tools enabled, so the model can search, open pages and cite sources without any scraping code in the project. A detailed system prompt sets the research method and output format, and it is cached so repeated queries cost less.
 
-## Result
+While the agent works, a [Rich](https://github.com/Textualize/rich) live display shows a spinner with the current search or page being read, and an optional verbose mode streams summarized reasoning and every tool call. When it finishes, the answer renders as formatted Markdown with a usage summary.
 
-Placeholder. What happened? Users, awards, performance numbers, or what it unlocked. Use real numbers only.
+Flags keep scope and cost under control:
 
-## What I learned
+| Flag | Purpose |
+| --- | --- |
+| `--flights-only` | Skip hotel research |
+| `--hotels-only` | Skip flight research |
+| `--max-searches N` | Cap the number of web searches |
+| `--verbose` | Show reasoning summaries and tool events |
 
-Placeholder. One or two honest takeaways.
+## Also a slash command
+
+The same research instructions ship as a skill file, so the agent can run inside a coding assistant as `/travel-agent <query>` without the CLI.

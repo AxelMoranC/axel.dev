@@ -8,7 +8,7 @@ Start the dev server in background mode:
 pnpm astro dev --background
 ```
 
-Manage it with `pnpm astro dev stop`, `pnpm astro dev status` and `pnpm astro dev logs`. Run `pnpm astro check` and `pnpm build` before committing.
+Manage it with `pnpm astro dev stop`, `pnpm astro dev status` and `pnpm astro dev logs`. Run `pnpm astro check`, `pnpm build` and `pnpm check:links` before committing. After changing `src/content.config.ts`, restart the dev server and delete `.astro/` if it serves stale content.
 
 Astro docs: https://docs.astro.build
 
@@ -27,4 +27,4 @@ Before changing UI, read `.agents/skills/taste-skill/SKILL.md` and apply it with
 
 ## Content
 
-Personal details live in `src/config.ts`. Projects, writing and experience are content collections under `src/content/`. Keep placeholders clearly labelled as `Placeholder.` until real content replaces them; never invent metrics or claims.
+Personal details live in `src/config.ts`. Projects, writing and experience are content collections under `src/content/`. Never ship visible placeholder copy: leave optional fields empty or set `draft: true`. Never invent metrics or claims, and never add non-public employer information.

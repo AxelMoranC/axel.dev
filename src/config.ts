@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import portrait from './assets/portrait.jpg';
 
 // Single source of truth for personal details; every page reads from this
 // file. Only public information belongs here: the repository is public.
@@ -14,9 +15,11 @@ export const site = {
   intro:
     'Full-time Software Engineer I at Shopify. Concordia Computer Science, class of 2026. Interned at Shopify, BetterSleep, Actalent and VuWall.',
   email: 'amorancaballero@hotmail.com',
+  // Illustrated portrait already used as the public GitHub avatar; swap the
+  // file in src/assets/ to change it everywhere.
   portrait: {
-    src: 'https://picsum.photos/seed/axel-portrait/960/1200?grayscale',
-    alt: 'Portrait placeholder',
+    src: portrait,
+    alt: 'Illustrated portrait of Axel in glasses and a dark hoodie, standing in front of Osaka Castle',
   },
   socials: [
     { label: 'GitHub', href: 'https://github.com/AxelMoranC', icon: 'ph:github-logo' },
@@ -27,6 +30,14 @@ export const site = {
     },
   ],
 } as const;
+
+// About page sections render only when filled in, so unfinished copy never
+// ships as a visible placeholder.
+export const about = {
+  personal: '',
+  now: '',
+  outside: '',
+};
 
 export const editor = {
   filename: 'axel.ts',
@@ -54,6 +65,11 @@ const resumeFileName = 'Axel-Moran-Caballero-Resume.pdf';
 export const resume = {
   fileName: resumeFileName,
   url: existsSync(join(process.cwd(), 'public', resumeFileName)) ? `/${resumeFileName}` : '',
+};
+
+// Used for structured data and the social preview image alt text.
+export const experience = {
+  current: { role: 'Software Engineer I', company: 'Shopify', url: 'https://www.shopify.com' },
 };
 
 export const nav = [

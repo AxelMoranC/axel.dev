@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { getPosts, getProjects } from '../lib/content';
 import { Icon } from 'astro-icon/components';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
@@ -8,16 +9,11 @@ import SectionHeading from '../components/SectionHeading.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { site } from '../config';
 
-const projects = (await getCollection('projects'))
-  .filter((p) => p.data.featured)
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
+const projects = (await getProjects()).filter((p) => p.data.featured).slice(0, 3);
 
 const experience = (await getCollection('experience')).sort((a, b) => a.data.order - b.data.order).slice(0, 5);
 
-const posts = (await getCollection('writing', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+const posts = (await getPosts()).slice(0, 3);
 
 const [before, after] = site.headline.split(site.headlineAccent);
 ---
@@ -26,16 +22,16 @@ const [before, after] = site.headline.split(site.headlineAccent);
   <section class="container-page pt-10 pb-20 md:pt-20 md:pb-32">
     <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
       <div class="lg:col-span-7">
-        <p class="text-sm text-muted" data-reveal>{site.greeting}</p>
+        <p class="text-sm text-muted" data-reveal-load>{site.greeting}</p>
         <h1
           class="mt-5 text-4xl leading-[1.08] font-semibold tracking-[-0.035em] text-balance md:text-5xl"
-          data-reveal
+          data-reveal-load
           style="--i:1"
         >
           {before}<span class="accent-mark">{site.headlineAccent}</span>{after}
         </h1>
-        <p class="mt-6 max-w-[46ch] text-lg text-muted" data-reveal style="--i:2">{site.intro}</p>
-        <div class="mt-9 flex flex-wrap gap-3" data-reveal style="--i:3">
+        <p class="mt-6 max-w-[46ch] text-lg text-muted" data-reveal-load style="--i:2">{site.intro}</p>
+        <div class="mt-9 flex flex-wrap gap-3" data-reveal-load style="--i:3">
           <a
             href="/projects"
             class="group inline-flex items-center gap-2 rounded-full bg-ink py-2.5 pr-2.5 pl-5 text-sm font-medium text-bg transition-transform duration-200 active:scale-[0.98]"
@@ -56,14 +52,14 @@ const [before, after] = site.headline.split(site.headlineAccent);
         </div>
       </div>
 
-      <div class="w-full max-w-[34rem] lg:col-span-5 lg:max-w-none" data-reveal style="--i:2">
+      <div class="w-full max-w-[34rem] lg:col-span-5 lg:max-w-none" data-reveal-load style="--i:2">
         <CodeEditor />
       </div>
     </div>
   </section>
 
   <section class="container-page py-16 md:py-24" aria-labelledby="projects-heading">
-    <SectionHeading title="Selected projects" href="/projects" linkLabel="All projects" />
+    <SectionHeading id="projects-heading" title="Selected projects" href="/projects" linkLabel="All projects" />
     {
       projects.length >= 3 ? (
         <div class="mt-10 grid gap-x-6 gap-y-12 md:grid-cols-12 md:grid-rows-[auto_auto]">
@@ -111,7 +107,7 @@ const [before, after] = site.headline.split(site.headlineAccent);
   </section>
 
   <section class="container-page py-16 md:py-24" aria-labelledby="writing-heading">
-    <SectionHeading title="Latest writing" href="/writing" linkLabel="All writing" />
+    <SectionHeading id="writing-heading" title="Latest writing" href="/writing" linkLabel="All writing" />
     <ul class="mt-8">
       {
         posts.map((post, i) => (
@@ -149,12 +145,13 @@ const [before, after] = site.headline.split(site.headlineAccent);
     background-position: 0 82%;
   }
   @media (prefers-reduced-motion: no-preference) {
-    :global(html.js) .accent-mark {
-      background-size: 0% 0.3em;
-      transition: background-size 1100ms cubic-bezier(0.16, 1, 0.3, 1) 450ms;
+    .accent-mark {
+      animation: mark-in 1100ms cubic-bezier(0.16, 1, 0.3, 1) 450ms both;
     }
-    :global(html.js) :global(.is-visible) .accent-mark {
-      background-size: 100% 0.3em;
+  }
+  @keyframes mark-in {
+    from {
+      background-size: 0% 0.3em;
     }
   }
 </style>

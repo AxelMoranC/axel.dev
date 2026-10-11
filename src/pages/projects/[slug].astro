@@ -1,12 +1,13 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import { getProjects } from '../../lib/content';
 import type { CollectionEntry } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCover from '../../components/ProjectCover.astro';
 
 export async function getStaticPaths() {
-  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  const projects = await getProjects();
   return projects.map((project, i) => ({
     params: { slug: project.id },
     props: { project, next: projects[(i + 1) % projects.length] },
@@ -31,16 +32,16 @@ const { Content } = await render(project);
 <BaseLayout title={title} description={summary} type="article">
   <article>
     <header class="container-page pt-10 md:pt-16">
-      <a href="/projects" class="group inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-ink" data-reveal>
+      <a href="/projects" class="group inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-ink" data-reveal-load>
         <Icon name="ph:arrow-left" class="size-4 transition-transform duration-300 ease-out-expo group-hover:-translate-x-0.5" />
         <span class="link-underline">All projects</span>
       </a>
-      <h1 class="mt-8 max-w-[18ch] text-4xl font-semibold tracking-[-0.035em] text-balance md:text-6xl md:leading-[1.02]" data-reveal style="--i:1">
+      <h1 class="mt-8 max-w-[18ch] text-4xl font-semibold tracking-[-0.035em] text-balance md:text-6xl md:leading-[1.02]" data-reveal-load style="--i:1">
         {title}
       </h1>
-      <p class="mt-5 max-w-[56ch] text-lg text-muted" data-reveal style="--i:2">{summary}</p>
+      <p class="mt-5 max-w-[56ch] text-lg text-muted" data-reveal-load style="--i:2">{summary}</p>
 
-      <dl class="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm md:grid-cols-4" data-reveal style="--i:3">
+      <dl class="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm md:grid-cols-4" data-reveal-load style="--i:3">
         <div>
           <dt class="font-mono text-xs text-muted">Role</dt>
           <dd class="mt-1.5">{role}</dd>
@@ -72,7 +73,7 @@ const { Content } = await render(project);
     </header>
 
     <div class="container-page mt-12">
-      <ProjectCover project={project} loading="eager" class="aspect-[16/9]" />
+      <ProjectCover project={project} loading="eager" class="aspect-[16/9]" sizes="(min-width: 1152px) 1072px, 100vw" />
       {
         coverCredit && (
           <p class="mt-3 text-sm text-muted">

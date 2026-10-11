@@ -8,7 +8,7 @@ const { title, intro } = Astro.props;
 ---
 
 <header class="container-page pt-14 pb-12 md:pt-20 md:pb-16">
-  <h1 class="text-4xl font-semibold tracking-[-0.035em] md:text-6xl md:leading-[1.02]" data-reveal>{title}</h1>
-  {intro && <p class="mt-5 max-w-[56ch] text-lg text-muted" data-reveal style="--i:1">{intro}</p>}
+  <h1 class="text-4xl font-semibold tracking-[-0.035em] md:text-6xl md:leading-[1.02]" data-reveal-load>{title}</h1>
+  {intro && <p class="mt-5 max-w-[56ch] text-lg text-muted" data-reveal-load style="--i:1">{intro}</p>}
   <slot />
 </header>

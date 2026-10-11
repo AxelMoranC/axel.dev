@@ -1,11 +1,29 @@
 ---
 title: Movie Review App
-summary: Full-stack movie review app with a Spring Boot REST API, a React frontend and MongoDB.
+summary: A full-stack movie review app with a Spring Boot REST API, a React frontend and MongoDB.
 year: '2023'
 role: Solo project
 stack: [Java, Spring Boot, React, MongoDB]
-cover: https://picsum.photos/seed/movie-review-app/1600/1200?grayscale
-coverAlt: Cover image placeholder for Movie Review App
+coverSnippet:
+  lang: java
+  filename: ReviewController.java
+  code: |-
+    @RestController
+    @RequestMapping("/api/v1/reviews")
+    public class ReviewController {
+      @Autowired
+      private ReviewService reviewService;
+
+      @PostMapping
+      public ResponseEntity<Review> createReview(
+          @RequestBody Map<String, String> payload) {
+        return new ResponseEntity<>(
+          reviewService.createReview(
+            payload.get("reviewBody"),
+            payload.get("imdbId")),
+          HttpStatus.CREATED);
+      }
+    }
 repo: https://github.com/AxelMoranC/MovieReviewApp
 order: 4
 ---
@@ -14,12 +32,8 @@ order: 4
 
 A full-stack movie review application with a movie slideshow and user reviews. The React frontend talks to a REST API built with Spring Boot, which stores movies and reviews in MongoDB.
 
-Placeholder. Mention one interesting technical decision.
+## How it fits together
 
-## Result
-
-Placeholder. What happened? Users, awards, performance numbers, or what it unlocked. Use real numbers only.
-
-## What I learned
-
-Placeholder. One or two honest takeaways.
+- **Backend:** a Spring Boot service with separate controllers, services and repositories for movies and reviews. Reviews are created with a `POST` to `/api/v1/reviews` and linked to a movie by its IMDb ID.
+- **Data:** MongoDB holds the movie and review documents through Spring Data repositories.
+- **Frontend:** a React app with routing, a hero carousel of movies, embedded trailers and a review form, using Axios to call the API.

@@ -1,28 +1,32 @@
 ---
-title: Zombie Shoot
-summary: Browser game built in a weekend at ConUHacks 2024. Winner of the Beenox challenge.
+title: BunnyTown Rescue
+summary: A top-down zombie shooter built in a weekend at ConUHacks 2024 with a team of four. Winner of the Beenox challenge.
 year: '2024'
-role: Hackathon team
+role: Hackathon team of four
 stack: [JavaScript, HTML Canvas]
-cover: https://picsum.photos/seed/zombie-shoot-hackathon/1600/1200?grayscale
-coverAlt: Cover image placeholder for Zombie Shoot
+cover: ../../assets/projects/bunnytown-rescue.jpg
+coverAlt: Pixel-art map of BunnyTown with a campfire, stone paths, thatched huts and bunnies calling for help
 repo: https://github.com/AxelMoranC/zombieShoot
 featured: true
 order: 3
 ---
 
-## The problem
+## The game
 
-Placeholder. What problem were you solving, and for whom? One short paragraph.
+Zombies have overrun BunnyTown and the player has to save its residents. You move with W, A, S and D, aim with the mouse, and your weapon fires automatically toward the cursor. Zombies spawn in a ring around the player and close in, and every kill drops experience to collect.
 
-## What I built
+It was built in a weekend at ConUHacks 2024, Concordia's 24-hour hackathon, by a team of four, and won the Beenox challenge.
 
-Placeholder. Describe the solution and your part in it. Mention the interesting technical decisions, not just the stack.
+## How it works
 
-## Result
+The whole game is about 320 lines of plain JavaScript drawing to an HTML canvas, with no engine or framework. A `requestAnimationFrame` loop moves the player, steers each zombie toward them, checks collisions with simple distance tests, and redraws everything every frame.
 
-Placeholder. What happened? Users, awards, performance numbers, or what it unlocked. Use real numbers only.
+Difficulty ramps up over time. Zombie health, speed and spawn rate creep upward each frame until they hit fixed caps, so a run starts calm and gets frantic.
 
-## What I learned
+Progress unlocks new weapons:
 
-Placeholder. One or two honest takeaways.
+- **Fire rate** increases every ten kills.
+- **Bazooka**: a slow, large projectile on a three-second timer, unlocked by collecting experience.
+- **Orbiting bullets** that circle the player, unlocked later in a run.
+
+The map, the bunnies and the zombies are original pixel art drawn by the team.

@@ -4,15 +4,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Page not found">
   <section class="container-page flex min-h-[60dvh] flex-col justify-center py-20">
-    <p class="font-mono text-sm text-muted" data-reveal>404</p>
-    <h1 class="mt-4 text-4xl font-semibold tracking-[-0.035em] md:text-6xl" data-reveal style="--i:1">This page does not exist.</h1>
-    <p class="mt-5 max-w-[48ch] text-lg text-muted" data-reveal style="--i:2">
+    <p class="font-mono text-sm text-muted" data-reveal-load>404</p>
+    <h1 class="mt-4 text-4xl font-semibold tracking-[-0.035em] md:text-6xl" data-reveal-load style="--i:1">This page does not exist.</h1>
+    <p class="mt-5 max-w-[48ch] text-lg text-muted" data-reveal-load style="--i:2">
       The link may be old, or the page may have moved.
     </p>
     <a
       href="/"
       class="mt-9 inline-flex w-fit items-center rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-bg transition-transform duration-200 active:scale-[0.98]"
-      data-reveal
+      data-reveal-load
       style="--i:3"
     >
       Back home

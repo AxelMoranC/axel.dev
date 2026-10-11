@@ -1,7 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ResumeLink from '../components/ResumeLink.astro';
-import { site } from '../config';
+import { about, site } from '../config';
 ---
 
 <BaseLayout title="About" description={`About ${site.name}.`}>
@@ -10,15 +11,23 @@ import { site } from '../config';
       <div class="md:col-span-5">
         <div class="md:sticky md:top-28">
           <div class="img-frame aspect-[4/5]" transition:name="portrait">
-            <img src={site.portrait.src} alt={site.portrait.alt} width="960" height="1200" loading="eager" class="size-full object-cover" />
+            <Image
+              src={site.portrait.src}
+              alt={site.portrait.alt}
+              widths={[400, 640, 960]}
+              sizes="(min-width: 768px) 440px, 100vw"
+              loading="eager"
+              fetchpriority="high"
+              class="size-full object-cover"
+            />
           </div>
         </div>
       </div>
 
       <div class="md:col-span-6 md:col-start-7">
-        <h1 class="text-4xl font-semibold tracking-[-0.035em] md:text-6xl md:leading-[1.02]" data-reveal>About</h1>
+        <h1 class="text-4xl font-semibold tracking-[-0.035em] md:text-6xl md:leading-[1.02]" data-reveal-load>About</h1>
 
-        <div class="prose mt-8" data-reveal style="--i:1">
+        <div class="prose mt-8" data-reveal-load style="--i:1">
           <p>
             I'm a full-time Software Engineer I at Shopify, based in Montreal. I studied Computer Science at Concordia University,
             class of 2026.
@@ -31,22 +40,26 @@ import { site } from '../config';
             Before that I built internal tools and automated end-to-end tests.
           </p>
           <p>I speak English, French and Spanish.</p>
-          <p>Placeholder. A sentence in your own voice about what you enjoy building and why.</p>
+          {about.personal && <p>{about.personal}</p>}
         </div>
 
-        <div class="mt-14 border-t border-line pt-8" data-reveal>
-          <h2 class="text-xl font-semibold tracking-tight">Now</h2>
-          <p class="mt-3 max-w-[60ch] text-muted">
-            Placeholder. What you are focused on this season: work, a side project, something you are learning.
-          </p>
-        </div>
+        {
+          about.now && (
+            <div class="mt-14 border-t border-line pt-8" data-reveal>
+              <h2 class="text-xl font-semibold tracking-tight">Now</h2>
+              <p class="mt-3 max-w-[60ch] text-muted">{about.now}</p>
+            </div>
+          )
+        }
 
-        <div class="mt-10 border-t border-line pt-8" data-reveal>
-          <h2 class="text-xl font-semibold tracking-tight">Outside of work</h2>
-          <p class="mt-3 max-w-[60ch] text-muted">
-            Placeholder. Hobbies, interests, or anything that gives people a reason to start a conversation.
-          </p>
-        </div>
+        {
+          about.outside && (
+            <div class="mt-10 border-t border-line pt-8" data-reveal>
+              <h2 class="text-xl font-semibold tracking-tight">Outside of work</h2>
+              <p class="mt-3 max-w-[60ch] text-muted">{about.outside}</p>
+            </div>
+          )
+        }
 
         <div class="mt-12 flex flex-wrap gap-3" data-reveal>
           <a

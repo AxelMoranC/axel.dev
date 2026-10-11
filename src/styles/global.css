@@ -129,6 +129,21 @@
   }
 }
 
+/* Above-the-fold content animates with CSS alone so it paints immediately
+   instead of waiting for the reveal script, which would delay LCP. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal-load] {
+    animation: reveal-in 800ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
 /* Page transition keyframes must be global so ClientRouter can reference them. */
 @keyframes page-out {
   to {
@@ -210,18 +225,24 @@
   border-radius: 4px;
   padding: 0.15em 0.35em;
 }
+/* Link colour on the code chip drops below 4.5:1, so linked code keeps ink
+   text and relies on the underline to read as a link. */
+.prose a code {
+  color: var(--ink);
+}
 .prose pre {
   overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid var(--line);
+  border-radius: 14px;
+  border: 1px solid transparent;
   padding: 1.1rem 1.25rem;
   font-size: 0.875rem;
   line-height: 1.65;
 }
-[data-theme='dark'] .astro-code,
-[data-theme='dark'] .astro-code span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
+/* Code blocks use the warm dark editor theme in both site themes; in dark
+   mode a deeper background and a border keep them distinct from the page. */
+[data-theme='dark'] .prose pre.astro-code {
+  background-color: #12100d !important;
+  border-color: var(--line);
 }
 .prose img {
   border-radius: 12px;

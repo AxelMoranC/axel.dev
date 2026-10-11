@@ -6,24 +6,29 @@ const link = z.object({ label: z.string(), href: z.url() });
 
 const projects = defineCollection({
   loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
-  schema: z.object({
-    title: z.string(),
-    summary: z.string(),
-    year: z.string(),
-    role: z.string(),
-    stack: z.array(z.string()),
-    cover: z.string(),
-    coverAlt: z.string(),
-    coverFit: z.enum(['cover', 'contain']).default('cover'),
-    coverWidth: z.number().default(1600),
-    coverHeight: z.number().default(1200),
-    coverCredit: link.optional(),
-    repo: z.url().optional(),
-    live: z.url().optional(),
-    links: z.array(link).default([]),
-    featured: z.boolean().default(false),
-    order: z.number().default(100),
-  }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string(),
+        summary: z.string(),
+        year: z.string(),
+        role: z.string(),
+        stack: z.array(z.string()),
+        cover: image().optional(),
+        coverAlt: z.string().optional(),
+        coverFit: z.enum(['cover', 'contain']).default('cover'),
+        coverCredit: link.optional(),
+        coverSnippet: z.object({ lang: z.string(), filename: z.string(), code: z.string() }).optional(),
+        repo: z.url().optional(),
+        live: z.url().optional(),
+        links: z.array(link).default([]),
+        featured: z.boolean().default(false),
+        order: z.number().default(100),
+        draft: z.boolean().default(false),
+      })
+      .refine((data) => data.coverSnippet || (data.cover && data.coverAlt), {
+        message: 'Each project needs either cover + coverAlt or coverSnippet',
+      }),
 });
 
 const writing = defineCollection({

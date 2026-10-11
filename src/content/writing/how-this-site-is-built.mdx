@@ -1,25 +1,44 @@
 ---
 title: How this site is built
-description: Astro, Markdown content and native view transitions. A short tour of the stack behind this site.
-date: 2026-10-10
-tags: [astro, web]
+description: Astro, Markdown content collections, native view transitions and a typing code editor. A short tour of the stack behind this site.
+date: 2026-10-11
+tags: [astro, web, performance]
 ---
 
-This site is a static [Astro](https://astro.build) project. Every project and post is a Markdown file, so adding content means adding a file, not touching components.
+This site is a static [Astro](https://astro.build) project hosted on Vercel. Every page is rendered to plain HTML at build time, and only a few small scripts run in the browser.
 
-## Stack
+## Content as files
 
-- **Astro** renders every page to static HTML at build time.
-- **Tailwind CSS** handles styling, with a small set of colour tokens for light and dark mode.
-- **Content collections** validate the frontmatter of every project and post.
-- **View transitions** animate between pages, so navigation feels continuous instead of a hard reload.
+Projects, posts and work history live in [content collections](https://docs.astro.build/en/guides/content-collections/). Each project and post is a Markdown or MDX file, and work history is a single JSON file. A schema validates every entry at build time, so a missing title or a broken URL fails the build instead of shipping a half-empty page.
+
+```ts
+const projects = defineCollection({
+  loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      cover: image().optional(),
+      featured: z.boolean().default(false),
+    }),
+});
+```
+
+Adding a project means adding a file. Hiding one means setting `draft: true`.
+
+## Design
+
+The palette is a warm off-white with a single soft tan accent, and the type is [Geist](https://vercel.com/font) and Geist Mono, self-hosted. Dark mode is a set of CSS variables swapped by a `data-theme` attribute, and the choice is remembered between visits. Every text colour pair is checked against WCAG AA contrast.
 
 ## Motion
 
-Motion is used for three things: page changes, content entering the viewport, and feedback on hover. All of it is turned off when the operating system asks for reduced motion.
+Motion does three jobs: page changes, content entering the viewport, and feedback on hover.
 
-```ts
-const projects = await getCollection('projects');
-```
+- **Page transitions** use Astro's `<ClientRouter />` on top of the browser's View Transitions API. Project covers keep the same transition name on the card and the detail page, so a cover grows into place when you open a project.
+- **Scroll reveals** are a CSS transition toggled by an `IntersectionObserver`, never a scroll listener.
+- **The code editor** on the home page is highlighted with Shiki at build time, so the full code is in the HTML from the first paint. A small script splits it into characters and reveals them once, then stops.
 
-Placeholder. Expand this post or replace it once the site is live.
+All of it switches off when the operating system asks for reduced motion, and the content is fully visible without JavaScript.
+
+## Performance
+
+Images go through Astro's image pipeline, which outputs responsive WebP files at several widths. Fonts are preloaded, layout shift is reserved up front, and the only third-party script is privacy-friendly analytics.
