@@ -1,0 +1,23 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  title: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { title, href, linkLabel } = Astro.props;
+---
+
+<div class="flex items-end justify-between gap-6" data-reveal>
+  <h2 class="text-2xl font-semibold tracking-[-0.025em] md:text-3xl">{title}</h2>
+  {
+    href && linkLabel && (
+      <a href={href} class="group inline-flex shrink-0 items-center gap-1.5 text-sm text-muted transition-colors hover:text-ink">
+        <span class="link-underline">{linkLabel}</span>
+        <Icon name="ph:arrow-right" class="size-4 transition-transform duration-300 ease-out-expo group-hover:translate-x-0.5" />
+      </a>
+    )
+  }
+</div>

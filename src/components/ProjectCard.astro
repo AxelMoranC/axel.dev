@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  size?: 'large' | 'default';
+  index?: number;
+  class?: string;
+}
+
+const { project, size = 'default', index = 0, class: className } = Astro.props;
+const { title, summary, year, stack, cover, coverAlt } = project.data;
+const large = size === 'large';
+---
+
+<a
+  href={`/projects/${project.id}`}
+  class:list={['group flex flex-col', className]}
+  data-reveal
+  style={`--i:${index}`}
+>
+  <div
+    class:list={['img-frame', large ? 'aspect-[4/3] md:aspect-auto md:min-h-[22rem] md:flex-1' : 'aspect-[16/10]']}
+    transition:name={`cover-${project.id}`}
+  >
+    <img
+      src={cover}
+      alt={coverAlt}
+      width="1600"
+      height="1200"
+      loading={index < 2 ? 'eager' : 'lazy'}
+      decoding="async"
+      class="size-full object-cover"
+    />
+  </div>
+  <div class="mt-4 flex items-baseline justify-between gap-4">
+    <h3 class:list={['font-semibold tracking-tight', large ? 'text-xl md:text-2xl' : 'text-lg']}>
+      <span class="link-underline">{title}</span>
+    </h3>
+    <span class="shrink-0 font-mono text-xs text-muted">{year}</span>
+  </div>
+  <p class="mt-1.5 max-w-[56ch] text-[0.95rem] text-muted">{summary}</p>
+  <p class="mt-3 font-mono text-xs text-muted/90">{stack.join(', ')}</p>
+</a>

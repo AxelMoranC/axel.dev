@@ -1,0 +1,25 @@
+---
+title: How this site is built
+description: Astro, Markdown content and native view transitions. A short tour of the stack behind this site.
+date: 2026-07-21
+tags: [astro, web]
+---
+
+This site is a static [Astro](https://astro.build) project. Every project and post is a Markdown file, so adding content means adding a file, not touching components.
+
+## Stack
+
+- **Astro** renders every page to static HTML at build time.
+- **Tailwind CSS** handles styling, with a small set of colour tokens for light and dark mode.
+- **Content collections** validate the frontmatter of every project and post.
+- **View transitions** animate between pages, so navigation feels continuous instead of a hard reload.
+
+## Motion
+
+Motion is used for three things: page changes, content entering the viewport, and feedback on hover. All of it is turned off when the operating system asks for reduced motion.
+
+```ts
+const projects = await getCollection('projects');
+```
+
+Placeholder. Expand this post or replace it once the site is live.

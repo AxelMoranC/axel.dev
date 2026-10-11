@@ -1,0 +1,44 @@
+[
+  {
+    "id": "bettersleep",
+    "company": "BetterSleep",
+    "role": "Full-Stack Developer Intern",
+    "start": "20XX",
+    "end": "20XX",
+    "order": 1,
+    "summary": "Placeholder. One sentence on the team, the product area and what you owned.",
+    "highlights": [
+      "Placeholder. Something you shipped and the result it had.",
+      "Placeholder. A technical challenge and how you solved it."
+    ],
+    "stack": []
+  },
+  {
+    "id": "vuwall",
+    "company": "VuWall",
+    "role": "Performance Optimization Intern",
+    "start": "20XX",
+    "end": "20XX",
+    "order": 2,
+    "summary": "Placeholder. One sentence on the team, the product area and what you owned.",
+    "highlights": [
+      "Placeholder. Something you shipped and the result it had.",
+      "Placeholder. A technical challenge and how you solved it."
+    ],
+    "stack": []
+  },
+  {
+    "id": "actalent",
+    "company": "Actalent",
+    "role": "QA Automation Intern",
+    "start": "20XX",
+    "end": "20XX",
+    "order": 3,
+    "summary": "Placeholder. One sentence on the team, the product area and what you owned.",
+    "highlights": [
+      "Placeholder. Something you shipped and the result it had.",
+      "Placeholder. A technical challenge and how you solved it."
+    ],
+    "stack": []
+  }
+]

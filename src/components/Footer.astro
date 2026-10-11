@@ -1,0 +1,51 @@
+---
+import { Icon } from 'astro-icon/components';
+import { site } from '../config';
+
+const year = new Date().getFullYear();
+---
+
+<footer id="contact" class="mt-20 border-t border-line/70 md:mt-28">
+  <div class="container-page py-20 md:py-28">
+    <div class="grid gap-12 md:grid-cols-12">
+      <div class="md:col-span-8" data-reveal>
+        <h2 class="text-3xl font-semibold tracking-[-0.03em] md:text-5xl md:leading-[1.05]">
+          Have a role or project in mind?
+        </h2>
+        <a
+          href={`mailto:${site.email}`}
+          class="group mt-8 inline-flex items-center gap-3 text-lg text-accent-ink md:text-xl"
+        >
+          <span class="link-underline">{site.email}</span>
+          <Icon
+            name="ph:arrow-up-right"
+            class="size-5 transition-transform duration-300 ease-out-expo group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
+        </a>
+      </div>
+
+      <ul class="flex flex-col gap-3 md:col-span-4 md:items-end md:justify-end" data-reveal style="--i:1">
+        {
+          site.socials.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-muted transition-colors hover:text-ink"
+              >
+                <Icon name={social.icon} class="size-[1.1rem]" />
+                <span class="link-underline">{social.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="mt-20 flex flex-col gap-2 text-sm text-muted sm:flex-row sm:justify-between">
+      <p>&copy; {year} {site.name}</p>
+      <a href="/rss.xml" class="link-underline w-fit">RSS</a>
+    </div>
+  </div>
+</footer>

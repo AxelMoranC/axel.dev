@@ -1,1 +1,232 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Tan is the only accent. accent-ink is the darker tone used whenever the
+   accent carries text, so links stay above WCAG AA on the light canvas. */
+:root {
+  --bg: #f4f0e9;
+  --surface: #ebe5db;
+  --line: #ddd5c8;
+  --ink: #2b2620;
+  --muted: #6b6359;
+  --accent: #c4a175;
+  --accent-soft: #e6d7c0;
+  --accent-ink: #7d5e39;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #1c1a16;
+  --surface: #25221d;
+  --line: #36312a;
+  --ink: #ece6dc;
+  --muted: #a69e92;
+  --accent: #d6bc96;
+  --accent-soft: #3a3125;
+  --accent-ink: #dcc4a0;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'cv11';
+    line-height: 1.6;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .link-underline {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 400ms var(--ease-out-expo), color 200ms ease-out;
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+
+  .img-frame {
+    overflow: hidden;
+    border-radius: 14px;
+    background: var(--surface);
+    outline: 1px solid var(--line);
+    outline-offset: -1px;
+  }
+  .img-frame img {
+    transition: transform 900ms var(--ease-out-expo);
+  }
+  .group:hover .img-frame img {
+    transform: scale(1.025);
+  }
+}
+
+/* Scroll reveal. Gated on html.js so content never stays hidden if scripts
+   fail, and on no-preference so reduced-motion users get static content. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 700ms var(--ease-out-expo),
+      transform 900ms var(--ease-out-expo);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+  html.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page transition keyframes must be global so ClientRouter can reference them. */
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+::view-transition-group(*) {
+  animation-duration: 550ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Long-form content */
+.prose {
+  max-width: 68ch;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.prose > * + * {
+  margin-top: 1.25em;
+}
+.prose h2 {
+  margin-top: 2.25em;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+.prose h3 {
+  margin-top: 1.75em;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.prose a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose a:hover {
+  text-decoration-thickness: 2px;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.25em;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose li::marker {
+  color: var(--accent-ink);
+}
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.25em;
+  color: var(--muted);
+}
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+.prose :not(pre) > code {
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 0.15em 0.35em;
+}
+.prose pre {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  padding: 1.1rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+.prose img {
+  border-radius: 12px;
+}
+.prose hr {
+  border-color: var(--line);
+  margin-block: 2.5em;
+}

@@ -1,0 +1,40 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<button
+  type="button"
+  class="grid size-9 place-items-center rounded-full text-muted transition-colors duration-200 hover:bg-surface hover:text-ink active:scale-95"
+  aria-label="Toggle dark mode"
+  data-theme-toggle
+>
+  <Icon name="ph:moon" class="size-[1.15rem] dark:hidden" />
+  <Icon name="ph:sun" class="hidden size-[1.15rem] dark:block" />
+</button>
+
+<script>
+  function initThemeToggle() {
+    const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+    if (!button) return;
+
+    const sync = () => button.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'dark'));
+    sync();
+
+    button.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      const apply = () => {
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem('theme', next);
+        sync();
+      };
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce && 'startViewTransition' in document) {
+        document.startViewTransition(apply);
+      } else {
+        apply();
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', initThemeToggle);
+</script>

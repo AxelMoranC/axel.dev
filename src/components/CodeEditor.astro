@@ -1,0 +1,301 @@
+---
+import { Code } from 'astro:components';
+import { editor, site } from '../config';
+import { editorTheme } from '../styles/editor-theme';
+---
+
+<figure class="code-editor font-mono" aria-label={`About ${site.name} in TypeScript`} data-code-editor>
+  <div class="editor-visual" aria-hidden="true" inert>
+    <div class="editor-chrome">
+      <div class="editor-dots" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="editor-tab">{editor.filename}</span>
+    </div>
+    <div class="editor-body">
+      <Code code={editor.code} lang="ts" themes={{ light: editorTheme, dark: editorTheme }} tabindex="-1" />
+    </div>
+  </div>
+  <figcaption class="sr-only">{editor.summary}</figcaption>
+</figure>
+
+<script>
+  const cleanups = new Map<HTMLElement, () => void>();
+
+  function initEditors() {
+    for (const card of document.querySelectorAll<HTMLElement>('[data-code-editor]')) {
+      if (card.dataset.editorInitialized) continue;
+      card.dataset.editorInitialized = 'true';
+
+      const motion = window.matchMedia('(prefers-reduced-motion: no-preference)');
+      const code = card.querySelector<HTMLElement>('pre code');
+      if (!motion.matches || !code || !('IntersectionObserver' in window)) continue;
+
+      const characters: { element: HTMLSpanElement | null; at: number }[] = [];
+
+      const splitCharacters = () => {
+        const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+        const nodes: Text[] = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+
+        const segmenter = typeof Intl.Segmenter === 'function'
+          ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
+          : null;
+        let duration = 0;
+
+        for (const node of nodes) {
+          const fragment = document.createDocumentFragment();
+          const segments = segmenter
+            ? Array.from(segmenter.segment(node.data), ({ segment }) => segment)
+            : Array.from(node.data);
+
+          for (const text of segments) {
+            duration += 18 + Math.random() * 20 + (text === '\n' ? 65 : /[,{}]/.test(text) ? 35 : 0);
+            if (text === '\n') {
+              fragment.append(document.createTextNode(text));
+              characters.push({ element: null, at: duration });
+            } else {
+              const element = document.createElement('span');
+              element.className = 'editor-character';
+              element.textContent = text;
+              fragment.append(element);
+              characters.push({ element, at: duration });
+            }
+          }
+          node.replaceWith(fragment);
+        }
+
+        // Keep the whole reveal brief even when the owner edits the snippet.
+        const firstAt = characters[0]?.at ?? 0;
+        const typingDuration = duration - firstAt;
+        for (const character of characters) {
+          character.at = typingDuration > 0 ? ((character.at - firstAt) / typingDuration) * 2800 : 0;
+        }
+      };
+
+      let finished = false;
+      let scheduled = false;
+      let timer = 0;
+      let frame = 0;
+      let caret: HTMLSpanElement | null = null;
+      let index = 0;
+      let startedAt: number | undefined;
+      card.dataset.editorState = 'waiting';
+
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        window.clearTimeout(timer);
+        window.cancelAnimationFrame(frame);
+        observer.takeRecords();
+        observer.disconnect();
+        motion.removeEventListener('change', onMotionChange);
+        for (const { element } of characters) element?.classList.add('is-typed');
+        caret?.classList.remove('editor-caret', 'editor-caret-finished');
+        card.dataset.editorState = 'complete';
+        cleanups.delete(card);
+      };
+
+      const onMotionChange = () => {
+        if (!motion.matches) finish();
+      };
+
+      const tick = (time: number) => {
+        if (finished || !card.isConnected || !motion.matches) {
+          finish();
+          return;
+        }
+
+        if (startedAt === undefined) {
+          // Splitting and the first reveal share a frame so the waiting editor stays readable.
+          splitCharacters();
+          startedAt = time;
+          card.dataset.editorState = 'typing';
+        }
+        const elapsed = time - startedAt;
+
+        while (index < characters.length && elapsed >= characters[index].at) {
+          const { element } = characters[index++];
+          if (!element) continue;
+          caret?.classList.remove('editor-caret');
+          element.classList.add('is-typed', 'editor-caret');
+          caret = element;
+        }
+
+        if (index < characters.length) {
+          frame = window.requestAnimationFrame(tick);
+        } else {
+          card.dataset.editorState = 'settling';
+          caret?.classList.add('editor-caret-finished');
+          timer = window.setTimeout(finish, 1100);
+        }
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (finished || !card.isConnected || !motion.matches) {
+            finish();
+            return;
+          }
+          if (scheduled || !entries.some((entry) => entry.isIntersecting)) return;
+          scheduled = true;
+          observer.takeRecords();
+          observer.disconnect();
+          timer = window.setTimeout(() => {
+            if (finished || !card.isConnected || !motion.matches) {
+              finish();
+              return;
+            }
+            frame = window.requestAnimationFrame(tick);
+          }, 500);
+        },
+        { threshold: 0.1 },
+      );
+
+      motion.addEventListener('change', onMotionChange);
+      cleanups.set(card, finish);
+      observer.observe(card);
+    }
+  }
+
+  document.addEventListener('astro:page-load', initEditors);
+  document.addEventListener('astro:before-swap', () => {
+    for (const cleanup of cleanups.values()) cleanup();
+    cleanups.clear();
+  });
+</script>
+
+<style>
+  .code-editor {
+    --editor-bg: #1d1915;
+    --editor-chrome: #241f19;
+    --editor-divider: #3b332a;
+    --editor-text: #ece6dc;
+    --editor-muted: #aaa094;
+    --editor-dot: #6c5e4c;
+    --editor-caret: #d6bc96;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--editor-bg);
+    container-type: inline-size;
+  }
+
+  :global([data-theme='dark']) .code-editor {
+    --editor-bg: #12100d;
+    --editor-chrome: #191611;
+    --editor-divider: #302a22;
+    --editor-dot: #605343;
+  }
+
+  .editor-chrome {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-inline: 16px;
+    border-bottom: 1px solid var(--editor-divider);
+    background: var(--editor-chrome);
+  }
+
+  .editor-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .editor-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--editor-dot);
+  }
+
+  .editor-tab {
+    padding: 13px 12px 11px;
+    border-bottom: 2px solid var(--editor-caret);
+    color: var(--editor-text);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .editor-body :global(pre.astro-code) {
+    margin: 0;
+    padding: 22px 10px 26px;
+    overflow-x: auto;
+    background: var(--editor-bg) !important;
+    color: var(--editor-text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-ligatures: none;
+    letter-spacing: normal;
+    line-height: 1.7;
+    tab-size: 2;
+    counter-reset: editor-line;
+  }
+
+  .editor-body :global(.astro-code span) {
+    background-color: transparent !important;
+  }
+
+  .editor-body :global(.astro-code code) {
+    display: block;
+    padding-inline-start: 3.25ch;
+  }
+
+  .editor-body :global(.line) {
+    position: relative;
+  }
+
+  .editor-body :global(.line)::before {
+    position: absolute;
+    inset-inline-start: -3.25ch;
+    width: 2.5ch;
+    color: var(--editor-muted);
+    text-align: right;
+    content: counter(editor-line);
+    counter-increment: editor-line;
+  }
+
+  @media (min-width: 768px) {
+    .editor-body :global(pre.astro-code) {
+      font-size: 13px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .editor-body :global(.editor-character) {
+      position: relative;
+      opacity: 0;
+    }
+
+    .editor-body :global(.is-typed) {
+      opacity: 1;
+    }
+
+    .editor-body :global(.editor-caret)::after {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-end: -2px;
+      width: 2px;
+      height: 1.2em;
+      background: var(--editor-caret);
+      pointer-events: none;
+      content: '';
+    }
+
+    .editor-body :global(.editor-caret-finished)::after {
+      animation: editor-caret-blink 360ms step-end 3 forwards;
+    }
+  }
+
+  @keyframes editor-caret-blink {
+    0% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+</style>

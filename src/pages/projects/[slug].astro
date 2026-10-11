@@ -1,0 +1,100 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  next: CollectionEntry<'projects'>;
+}
+
+const { project, next } = Astro.props;
+const { title, summary, year, role, stack, cover, coverAlt, repo, live } = project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={title} description={summary} type="article">
+  <article>
+    <header class="container-page pt-10 md:pt-16">
+      <a href="/projects" class="group inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-ink" data-reveal>
+        <Icon name="ph:arrow-left" class="size-4 transition-transform duration-300 ease-out-expo group-hover:-translate-x-0.5" />
+        <span class="link-underline">All projects</span>
+      </a>
+      <h1 class="mt-8 max-w-[18ch] text-4xl font-semibold tracking-[-0.035em] text-balance md:text-6xl md:leading-[1.02]" data-reveal style="--i:1">
+        {title}
+      </h1>
+      <p class="mt-5 max-w-[56ch] text-lg text-muted" data-reveal style="--i:2">{summary}</p>
+
+      <dl class="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm md:grid-cols-4" data-reveal style="--i:3">
+        <div>
+          <dt class="font-mono text-xs text-muted">Role</dt>
+          <dd class="mt-1.5">{role}</dd>
+        </div>
+        <div>
+          <dt class="font-mono text-xs text-muted">Year</dt>
+          <dd class="mt-1.5">{year}</dd>
+        </div>
+        <div>
+          <dt class="font-mono text-xs text-muted">Stack</dt>
+          <dd class="mt-1.5">{stack.join(', ')}</dd>
+        </div>
+        {
+          (repo || live) && (
+            <div>
+              <dt class="font-mono text-xs text-muted">Links</dt>
+              <dd class="mt-1.5 flex flex-col gap-1">
+                {live && (
+                  <a href={live} target="_blank" rel="noopener noreferrer" class="inline-flex w-fit items-center gap-1 text-accent-ink">
+                    <span class="link-underline">Live</span>
+                    <Icon name="ph:arrow-up-right" class="size-3.5" />
+                  </a>
+                )}
+                {repo && (
+                  <a href={repo} target="_blank" rel="noopener noreferrer" class="inline-flex w-fit items-center gap-1 text-accent-ink">
+                    <span class="link-underline">Source</span>
+                    <Icon name="ph:arrow-up-right" class="size-3.5" />
+                  </a>
+                )}
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </header>
+
+    <div class="container-page mt-12">
+      <div class="img-frame aspect-[16/9]" transition:name={`cover-${project.id}`}>
+        <img src={cover} alt={coverAlt} width="1600" height="900" loading="eager" class="size-full object-cover" />
+      </div>
+    </div>
+
+    <div class="container-page mt-14 md:mt-20">
+      <div class="prose mx-auto" data-reveal>
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  {
+    next.id !== project.id && (
+      <nav class="container-page mt-24" aria-label="Next project">
+        <a href={`/projects/${next.id}`} class="group block border-t border-line pt-8">
+          <span class="font-mono text-xs text-muted">Next project</span>
+          <span class="mt-2 flex items-center justify-between gap-6">
+            <span class="text-2xl font-semibold tracking-[-0.025em] md:text-4xl">{next.data.title}</span>
+            <Icon name="ph:arrow-right" class="size-6 shrink-0 text-muted transition-all duration-300 ease-out-expo group-hover:translate-x-1 group-hover:text-accent-ink" />
+          </span>
+        </a>
+      </nav>
+    )
+  }
+</BaseLayout>
